@@ -1,4 +1,5 @@
 # WEBPACK
+##This is a template/ It can be reused by replacing the 'src' folder and replacing thepaths to the home page in the 'package.json' file on lines 4 and 14? substituting your values.
 
 Для установки пакетов используйте команду npm install
 
