@@ -8,6 +8,10 @@
     "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NataDent/learnwebpack5.git"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

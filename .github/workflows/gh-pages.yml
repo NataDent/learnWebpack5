@@ -1,38 +1,37 @@
-name: GitHub Pages
+name: "Deploy to GitHub Pages"
 
 on:
   push:
-    branches:
-      - main  # Set a branch name to trigger deployment
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true  # Fetch Hugo themes (true OR recursive)
-          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          hugo-version: '0.110.0'
+          node-version: ${{ matrix.node-version }}
 
-      - name: Build
-        run: hugo --minify
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+        env:
+          CI: true
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        # If you're changing the branch from main,
-        # also change the `main` in `refs/heads/main`
-        # below accordingly.
-        if: github.ref == 'refs/heads/main'
+        uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          branch: gh-pages
+          folder: dist
