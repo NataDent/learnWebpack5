@@ -1,7 +1,16 @@
 body {
+    box-sizing: border-box;
     font-family: 'Montserrat';
     background-color: $back;
     color: $text;
+   
+}
+
+.container{ 
+    margin-left: $space;
+    & ul{
+        list-style-type: none;
+    }
 }
 
 .image{
