@@ -1,8 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
-
+const FileManagerPlugin = require('filemanager-webpack-plugin');
 const mode = process.env.NODE_ENV || 'development';
 const devMode = mode === 'development';
 const target = devMode ? 'web' : 'browserslist';
@@ -13,6 +12,7 @@ module.exports = {
   target,
   devtool,
   devServer: {
+    watchFiles: path.resolve(__dirname, 'src'),
     port: 3000,
     open: true,
     hot: true,
@@ -31,9 +31,21 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
     }),
-    // new CopyPlugin({
-    //   patterns: [{ from: 'static', to: './' }],
-    // }),
+    new FileManagerPlugin({
+      events: {
+        onStart: {
+          delete: ['dist'],
+        },
+        onEnd: {
+          copy: [
+            {
+              source: path.resolve(__dirname, 'src', 'static'),
+              destination: 'dist',
+            }
+          ],
+        },
+      },
+    }),
   ],
   module: {
     rules: [
@@ -110,6 +122,13 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env'],
           },
+        },
+      },
+      {
+        test: /\.pdf$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'files/[name][ext]',
         },
       },
     ],
